@@ -10,6 +10,7 @@
 #
 #
 ####################################################################
+
 import numpy as np
 from camfr import *
 #from sympy import *
@@ -29,10 +30,15 @@ This changes current lambda and quarter-wave optical thicknesses.
 
 
 # Some useful codes of CAMFR.
-plot_n(s,arange(0,5,1),arange(0,100,0.5))
-r_x = arange(0,10,1)
-r_z = arange(0,100,1) 
-s.plot_field(s, lambda f : f.E1(), vx, vz)
+s.length() # returns length of the stack along the z-axis.
+s.width()  # returns the c1-length of the stack.
+
+r_x = np.arange(0, s.width()/(2*s.width()), 0.005)
+r_z = np.arange(0, s.length(), 0.005) 
+plot_n(s, r_x, r_z)
+
+s.plot_field(lambda f : f.E2().real, r_x, r_z)
+s.animate_field(lambda f : f.E2(), r_x, r_z)
 
 # Some useful codes of this code.
 Fibonacci(n=2, conj=False, text=True) => 
@@ -40,13 +46,16 @@ Fibonacci(n=2, conj=False, text=True) =>
 # References: 
 - CsBr_Te_Ge, Del Barco, O. et al. (2017) Omnidirectional high-reflectivity mirror in the 4-20 um spectral range, Journal of Optics (United Kingdom). IOP Publishing, 19(6). doi: 10.1088/2040-8986/aa6c76.
 """
+
 ### Settings
 """
 Omnidirectional Mirror
+======================
 sol:1 (planar), structure:32 (capped_RS_cRS), materials:40 (TiO2_SiO2),
 simulation:5 (R_vs_l_vs_theta)
 
 Fiber Bragg Gratings (FBGs)
+===========================
 sol:4 (circ), structure:2 (capless_Fib), materials:1 (GaAs_AlAs), 
 simulation:3 (R_vs_l)
 """
@@ -66,28 +75,30 @@ structure = {2:"capless_Fib", 4:"capped_Fib",
             30:"capless_RS_cRS",   32:"capped_RS_cRS",
             40:"sarcan_fig_2_16",  42:"2_layers",
             44:"ghatak",
-            50:"Barco2017_Fig2b", 52:"Barco2017_Fig2d"}[18]
-materials = {1:"GaAs_AlAs", 20:"2_layers", 21:"ghatak", 
+            50:"Barco2017_Fig2b", 52:"Barco2017_Fig2d"}[14]
+materials = {1:"GaAs_AlAs", 20:"2_layers", 21:"ghatak",
             30:"Barco2017_Fig2b", 31:"Barco2017_Fig2d",
             40:"TiO2_SiO2"}[1]
 simulation = {1:"R_vs_l_const_n", 2:"R_vs_theta_const_n",
               3:"R_vs_l", 4:"",
               5:"R_vs_l_vs_theta", 6:"n_vs_l"}
+              
 #simulation = simulation.values() # Execute all simulations
 simulation = simulation[3]
 
 if materials in ["TiO2_SiO2"]:
     (target_l, min_l, max_l, dl) = (0.6, 0.43, 1.535, 0.002) # 0.002 Wavelength min_lambda, max_lambda, delta_lambda in (um).
 else:
-    (target_l, min_l, max_l, dl) = (1.3, 1.1, 1.5, 0.001) # SakineThesis, Wavelength min_lambda, max_lambda, delta_lambda in (um).
+    (target_l, min_l, max_l, dl) = (1.3, 1.1, 1.5, 0.001) # SakineThesis, FBG, Wavelength min_lambda, max_lambda, delta_lambda in (um).
+    (target_l, min_l, max_l, dl) = (1.3, 0.75,  2, 0.001) # Nutku2025, 1D PC, Wavelength min_lambda, max_lambda, delta_lambda in (um).
 
 if structure in ["Barco2017_Fig2b", "Barco2017_Fig2d"]:
-    (target_l, min_l, max_l, dl) = (4, 4, 20, 0.01) # 0.01 min_lambda, max_lambda, delta_lambda in (um).
+    (target_l, min_l, max_l, dl) = (4, 4, 20, 0.001) # 0.01 min_lambda, max_lambda, delta_lambda in (um).
 
 set_lambda(target_l)  # Set design wavelength of the DBR structure.
-eps = 1e-5            # Precision for calculating overlap integrals. (1e-5)
-T = 4                 # 5 Period of the Fibonacci cluster. Fibonacci=20
-order = 2             # Order of the Fibonacci replacement sequence. Fibonacci=5
+eps = 1e-10           # Precision for calculating overlap integrals. (1e-5)
+T = 2                 # 5 Period of the Fibonacci cluster. Fibonacci=20
+order = 3             # Order of the Fibonacci replacement sequence. Fibonacci=5
 
 # Lists of R_l, R_l_theta calculations.
 [ls, ns, n_vs_l, RsTE, RsTM, R_vs_l, R_vs_l_vs_theta] = [[],[],[],[],[],[],[]]
@@ -554,24 +565,23 @@ def fanimate_fields():
     inc[0] = 1
     s.set_inc_field(inc)
     s.calc()
-    
+    s.length() # returns length of the stack along the z-axis.
+    s.width()  # returns the c1-length of the stack.
+
+    # Print information
+    print("Total length along z-axis= ", s.length())
+    print("Total length along x-axis= ", s.width())
+
     # Do some plotting.
-    r_x = arange(-1.0, 1.0, 0.05)
-    r_z = arange(-1.0, 1.0, 0.05)
-    
-    A.plot_n(r_x)
-    A.mode(0).plot_field(lambda f : f.E2().real, r_x)
+    r_x = np.arange(0, s.width()/(2*s.width()), 0.005)
+    r_z = np.arange(0, s.length(), 0.005) 
+
+    plot_n(s, r_x, r_z) # Plot n, refractive index.
     s.plot_field(lambda f : f.E2().real, r_x, r_z)
     s.animate_field(lambda f : f.E2(), r_x, r_z)
     
-#==============================================================================
-#     r_x = arange(0,10,1)
-#     r_z = arange(0,100,1)    
-#     #animate_field(s, lambda f : f.E1(), vx, vz)
-#     
-#     s.plot_field(lambda f : f.E2().real, r_x, r_z)
-#     s.animate_field(lambda f : f.E2(), r_x, r_z)
-#==============================================================================
+    A.plot_n(r_x)
+    A.mode(0).plot_field(lambda f : f.E2().real, r_x)
 
 def plot_n_vs_l():
     # Plot refractive index versus wavelength.
@@ -821,14 +831,15 @@ elif sol=="slab":
 ### SOLUTION: slabfiber
 elif sol=="slabfiber":
     # tutorial2.py, tutorial3.py are used.
+    set_material()
 
     # Define waveguide sections.
     set_lower_PML(-0.1)
     set_upper_PML(-0.1)
-    t = 2 # thickness of each slab. If t>>wavelength solution approaches to planar. #0.2
+    t = 0.01 # 2 um thickness of each slab. If t>>wavelength solution approaches to planar. #0.01 Nutku2025
    
     """    
-    Its geometry is a fiber. But core layer will alternate in Fibonacci. sequence
+    Its geometry is a fiber. But core layer will alternate in Fibonacci sequence
     like a Fiber Bragg Grating
     """
     A = Slab(A_m(t))
@@ -860,13 +871,34 @@ elif sol=="slabfiber":
 elif sol=="circ":
     set_material()    
     # Define waveguide sections.
-    set_circ_PML(-0.1)
-    t = 0.5 # 0.5 (um) # thickness of each slab. #0.2
-
+    """
+    set_circ_PML(p): gives the cladding of all subsequently
+    with p usually negative for absorption. 
+    Implements PML boundary conditions. By default, p is zero. 
+    """    
+    set_circ_PML(-0.01)
+    t = 0.04 # 0.04 0.5 (um) # thickness of each slab.
+    
+    """
+    Circ uses cylindrical coordinates, so rather than
+    A = Circ(clad_m(4*t) + A_m(t) + clad_m(4*t))
+        
+    you probably want :
+        
+    A = Circ(A_m(t/2) + clad_m(4*t))
+    Cheers,
+    Peter
+    
     A = Circ(clad_m(4*t) + A_m(t) + clad_m(4*t))
     B = Circ(clad_m(4*t) + B_m(t) + clad_m(4*t))
     C = Circ(clad_m(4*t) + C_m(t) + clad_m(4*t))
-    air = Circ(air_m(9*t))
+    """
+
+  
+    A = Circ(clad_m(4*t) + A_m(t) + clad_m(4*t) + air_m(10*t))
+    B = Circ(clad_m(4*t) + B_m(t) + clad_m(4*t) + air_m(10*t))
+    C = Circ(clad_m(4*t) + C_m(t) + clad_m(4*t) + air_m(10*t))
+#    air = Circ(air_m(19*t)) # 4.5*t = 2*t + 0.5*t + 2*t
     
     """
     A = Circ(A_m(t))
