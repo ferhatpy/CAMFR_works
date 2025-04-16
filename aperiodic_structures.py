@@ -200,6 +200,7 @@ def DoublePeriod(n, conj=False, text=False):
             a, b = a+b, a+a
         print("DP({0}) = {1}".format(n,a))
 
+
 def Fibonacci(n, conj=False, text=False):
     """
     Generates a Fibonacci replacement sequence.
@@ -227,6 +228,7 @@ def Fibonacci(n, conj=False, text=False):
             print("F({0}) = {1}".format(i,a))
             a, b = b, b+a
         print("F({0}) = {1}".format(n,a))
+
         
 def Periodic(n, conj=False, text=False):
     """
@@ -255,6 +257,7 @@ def Periodic(n, conj=False, text=False):
             print("PR({0}) = {1}".format(i,a))
             a, b = a+b, a+b
         print("PR({0}) = {1}".format(n,a))        
+
         
 def RudinShapiro(n, conj=False, text=False):
     """    
@@ -288,6 +291,7 @@ def RudinShapiro(n, conj=False, text=False):
             print("RS({0}) = {1}".format(i, aa))
             aa, ab, ba, bb = aa+ab, aa+ba, bb+ab, bb+ba
         print("RS({0}) = {1}".format(n, aa))
+
         
 def ThueMorse(n, conj=False, text=False):
     """    
@@ -324,6 +328,7 @@ def ThueMorse(n, conj=False, text=False):
             print("TM({0}) = {1}".format(i,a))
             a, b = a+b, b+a
         print("TM({0}) = {1}".format(n,a))
+
 
 def set_material():
     global A_m, B_m, C_m, air_m
@@ -420,6 +425,7 @@ def set_material():
         [d_A, d_B, d_C] = [3.2229, 1.0094, 20]
         
 
+
 def set_structure():
     global T, order
 
@@ -495,6 +501,7 @@ def set_structure():
         
     return res
 
+
 def calc_R_vs_l():
     # Calculates reflectance and transmittance.
     ls.append(l)
@@ -511,6 +518,7 @@ def calc_R_vs_l():
 
     R_vs_l.append([l, refTE, refTM])
     print(l, refTE, refTM)
+
     
 def calc_R_vs_theta():
     # Calculates reflectance versus incident angle.
@@ -537,6 +545,7 @@ def calc_R_vs_theta():
     bangle = thetas[RsTM_t.index(min(RsTM_t))]
     print "Brewster Angle=", bangle
 
+
 def calc_R_vs_l_vs_theta():
     """    
     Calculates reflectance versus wavelength versus incident angle.
@@ -559,6 +568,7 @@ def calc_R_vs_l_vs_theta():
     
         R_vs_l_vs_theta.append([l, theta, refTE, refTM])
     print(l, theta, refTE, refTM)
+
     
 def fanimate_fields():
     inc = zeros(N())
@@ -583,6 +593,7 @@ def fanimate_fields():
     A.plot_n(r_x)
     A.mode(0).plot_field(lambda f : f.E2().real, r_x)
 
+
 def plot_n_vs_l():
     # Plot refractive index versus wavelength.
     fig, ax = plt.subplots()
@@ -592,6 +603,7 @@ def plot_n_vs_l():
     plt.title(r"n-$\lambda$")
     plt.show()
     plt.savefig("n_l_"+filename+".pdf", format='pdf', dpi=300, bbox_inches='tight', pad_inches = 0.05)
+
 
 def plot_R_vs_l():
     # Plot reflectance versus wavelength.
@@ -610,6 +622,7 @@ def plot_R_vs_l():
     plt.title("TM")
     plt.show()
     plt.savefig("R_l_"+filename+"_TM.pdf",format='pdf',dpi=300, bbox_inches='tight',pad_inches = 0.05)  
+
     
 def plot_R_vs_theta():
     # Plot reflectance versus angle of incidence.
@@ -628,6 +641,7 @@ def plot_R_vs_theta():
     plt.title("TM")
     plt.show()
     plt.savefig("R_t_"+filename+"_TM.pdf",format='pdf', dpi=300, bbox_inches='tight',pad_inches = 0.05)    
+
 
 def plot_save():
     # Plot & save results.
@@ -888,23 +902,12 @@ elif sol=="circ":
     A = Circ(A_m(t/2) + clad_m(4*t))
     Cheers,
     Peter
-    
-    A = Circ(clad_m(4*t) + A_m(t) + clad_m(4*t))
-    B = Circ(clad_m(4*t) + B_m(t) + clad_m(4*t))
-    C = Circ(clad_m(4*t) + C_m(t) + clad_m(4*t))
     """
-
   
     A = Circ(clad_m(4*t) + A_m(t) + clad_m(4*t) + air_m(10*t))
     B = Circ(clad_m(4*t) + B_m(t) + clad_m(4*t) + air_m(10*t))
     C = Circ(clad_m(4*t) + C_m(t) + clad_m(4*t) + air_m(10*t))
 #    air = Circ(air_m(19*t)) # 4.5*t = 2*t + 0.5*t + 2*t
-    
-    """
-    A = Circ(A_m(t))
-    B = Circ(B_m(t))
-    air = Circ(air_m(t))
-    """    
     
     s = set_structure()
      
