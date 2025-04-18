@@ -6,8 +6,8 @@
 # Propagation of light in aperiodic structures.
 # 
 # References:
-#
-#
+# Nutku2021, F. Nutku and S. GÃ¶kÅŸin, "Comparison of omnidirectional reflectivity of quasi-periodic dielectric multilayers," Optik, vol. 228, p. 166220, Feb. 2021, doi: 10.1016/j.ijleo.2020.166220.
+# Barco2017, O. Del Barco, E. C. Jarque, V. Gasparian, and J. M. Bueno, "Omnidirectional high-reflectivity mirror in the 4â€“20 Î¼ m spectral range," J. Opt., vol. 19, no. 6, p. 065102, Jun. 2017, doi: 10.1088/2040-8986/aa6c76.
 #
 ####################################################################
 
@@ -16,14 +16,16 @@ from camfr import *
 #from sympy import *
 
 """
-# structure
+# Structure
 capless -> stack of layers (planar or slab) without air and substrate cap layers.
 capped  -> stack of layers (planar or slab) with air and substrate cap layers.
 
-# materials
+
+# Materials
 2_layers -> is developed for testing Brewster's angle.
 
-# calculation
+
+# Calculations
 In R_vs_l_vs_theta calculation, at each iteration of lambda,
 set_lambda(l)->set_material() routine is executed.
 This changes current lambda and quarter-wave optical thicknesses.
@@ -40,8 +42,10 @@ plot_n(s, r_x, r_z)
 s.plot_field(lambda f : f.E2().real, r_x, r_z)
 s.animate_field(lambda f : f.E2(), r_x, r_z)
 
+
 # Some useful codes of this code.
 Fibonacci(n=2, conj=False, text=True) => 
+
 
 # References: 
 - CsBr_Te_Ge, Del Barco, O. et al. (2017) Omnidirectional high-reflectivity mirror in the 4-20 um spectral range, Journal of Optics (United Kingdom). IOP Publishing, 19(6). doi: 10.1088/2040-8986/aa6c76.
@@ -51,11 +55,12 @@ Fibonacci(n=2, conj=False, text=True) =>
 """
 Omnidirectional Mirror
 ======================
+Nutku2021
 sol:1 (planar), structure:32 (capped_RS_cRS), materials:40 (TiO2_SiO2),
 simulation:5 (R_vs_l_vs_theta)
 
-Fiber Bragg Gratings (FBGs)
-===========================
+Fiber Bragg Gratings (FBGs), 1D Cylindrical Photonic Crystals
+=============================================================
 sol:4 (circ), structure:2 (capless_Fib), materials:1 (GaAs_AlAs), 
 simulation:3 (R_vs_l)
 """
@@ -75,7 +80,7 @@ structure = {2:"capless_Fib", 4:"capped_Fib",
             30:"capless_RS_cRS",   32:"capped_RS_cRS",
             40:"sarcan_fig_2_16",  42:"2_layers",
             44:"ghatak",
-            50:"Barco2017_Fig2b", 52:"Barco2017_Fig2d"}[14]
+            50:"Barco2017_Fig2b", 52:"Barco2017_Fig2d"}[2]
 materials = {1:"GaAs_AlAs", 20:"2_layers", 21:"ghatak",
             30:"Barco2017_Fig2b", 31:"Barco2017_Fig2d",
             40:"TiO2_SiO2"}[1]
@@ -100,6 +105,7 @@ eps = 1e-10           # Precision for calculating overlap integrals. (1e-5)
 T = 2                 # 5 Period of the Fibonacci cluster. Fibonacci=20
 order = 3             # Order of the Fibonacci replacement sequence. Fibonacci=5
 
+
 # Lists of R_l, R_l_theta calculations.
 [ls, ns, n_vs_l, RsTE, RsTM, R_vs_l, R_vs_l_vs_theta] = [[],[],[],[],[],[],[]]
 # Lists of R_theta calculation.
@@ -107,6 +113,7 @@ order = 3             # Order of the Fibonacci replacement sequence. Fibonacci=5
 filename = "fib_1D_sol_{0}_mat_{1}_ord{2}_T{3}_str_{4}"\
 .format(sol, materials, order, T, structure)
 print(filename)
+
 
 """
 # Optical constants of GaAs (Gallium arsenide)
@@ -670,8 +677,8 @@ def set_lang(plang):
     'n'             : u"n"},
 
     'tr': {
-    'incidence'     : u"Geliþ açýsý $\\theta_i$",
-    'reflectance'   : u"Yansýtma $R=|r^2|$",
+    'incidence'     : u"GeliÃ¾ aÃ§Ã½sÃ½ $\\theta_i$",
+    'reflectance'   : u"YansÃ½tma $R=|r^2|$",
     'wavelength'    : u"Dalgaboyu ($\mu m$)",
     'n'             : u"n"},
     }
@@ -891,7 +898,7 @@ elif sol=="circ":
     Implements PML boundary conditions. By default, p is zero. 
     """    
     set_circ_PML(-0.01)
-    t = 0.04 # 0.04 0.5 (um) # thickness of each slab.
+    t = 0.04 # 0.04 (um) # thickness of each slab. At t=0.5um numerical instability arrises.
     
     """
     Circ uses cylindrical coordinates, so rather than
