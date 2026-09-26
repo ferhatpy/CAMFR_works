@@ -3,8 +3,7 @@
 
 ####################################################################
 #
-# Propagation of light in aperiodic structures.ferhat
-# Propagation of light in aperiodic structures.gitg
+# Propagation of light in aperiodic structures.---
 # 
 # References:
 # Nutku2021, F. Nutku and S. Gökşin, "Comparison of omnidirectional reflectivity of quasi-periodic dielectric multilayers," Optik, vol. 228, p. 166220, Feb. 2021, doi: 10.1016/j.ijleo.2020.166220.
